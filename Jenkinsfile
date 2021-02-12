@@ -22,7 +22,8 @@ node {
         // when running in multi-branch job, one must issue this command
         checkout scm
     }
-
+   
+    withEnv(["HOME=${env.WORKSPACE}"]) {
     withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
         stage('Authorize DevHub') {
                 rc = command "${toolbelt}/sfdx force:auth:jwt:grant --instanceurl ${SFDC_HOST} --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --setalias HubOrg"
@@ -30,6 +31,7 @@ node {
                     error 'Salesforce dev hub org authorization failed.'
                 }
             }
+    }
 }
 
 
